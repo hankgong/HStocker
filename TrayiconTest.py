@@ -12,17 +12,30 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.setContextMenu(menu)
 
 
-class MainWindow(QtWidgets.QWidget):
+class Window(QtWidgets.QMainWindow):
     def __init__(self):
-        super(MainWindow, self).__init__()
+        super(Window, self).__init__()
         self.initUI()
 
     def initUI(self):
         self.setGeometry(300, 300, 250, 150)
-        self.setWindowTitle('Icon')
+        self.setWindowTitle('TrayIcon Test')
+        self.setWindowIcon(QtGui.QIcon('test.png'))
         self.tray_icon = SystemTrayIcon(QtGui.QIcon('test.png'), self)
         self.tray_icon.activated.connect(self.iconActivated)
         self.tray_icon.show()
+
+        extractAction = QtWidgets.QAction("&GET TO THE CHOPPAH!!!", self)
+        extractAction.setShortcut("Ctrl+Q")
+        extractAction.setStatusTip('Leave The App')
+        extractAction.triggered.connect(self.close_application)
+
+        self.statusBar()
+
+        mainMenu = self.menuBar()
+        fileMenu = mainMenu.addMenu('&File')
+        fileMenu.addAction(extractAction)
+
         self.show()
 
     def closeEvent(self, QCloseEvent):
@@ -35,8 +48,12 @@ class MainWindow(QtWidgets.QWidget):
         if reason == QtWidgets.QSystemTrayIcon.DoubleClick:
             self.show()
 
+    def close_application(self):
+        print("whooaaaa so custom!!!")
+        sys.exit()
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])
-    w = MainWindow()
+    w = Window()
     sys.exit(app.exec_())
